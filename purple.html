@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قهوة | Coffee Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ==================== تنسيقات أساسية (للجوال أولاً) ==================== */
+        body {
+            margin: 0; padding: 0;
+            
+            /* --- إعدادات خلفية الجوال --- */
+            background-image: url('final_background.png'); /* صورة الجوال الطولية */
+            background-size: 550px 100%; /* العرض المناسب للجوال */
+            background-repeat: no-repeat; 
+            background-position: top center;
+            
+            background-color: #F5F5DC; 
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: hidden; 
+            min-height: 100vh; 
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* ==================== ميديا كويري (للكمبيوتر فقط) ==================== */
+        /* هذا الكود يشتغل بس إذا كانت الشاشة أكبر من 1024 بكسل (لابتوب/كمبيوتر) */
+        @media (min-width: 1024px) {
+            body {
+                /* --- هنا حط اسم صورة الكمبيوتر العريضة --- */
+                background-image: url('desktop_bg.png'); /* <--- غير هذا الاسم بصورة الكمبيوتر */
+                
+                /* نجعلها تغطي الشاشة بالكامل */
+                background-size: cover; 
+                background-position: center center;
+            }
+        }
+
+        /* ==================== الأزرار الرئيسية ==================== */
+        .buttons-container {
+            position: absolute; top: 70%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 350px; display: flex; flex-direction: column; gap: 15px;
+            z-index: 10; transition: opacity 0.3s ease;
+        }
+
+        /* تنسيق موحد لجميع الأزرار */
+        .sketch-btn {
+            display: flex; justify-content: center; align-items: center; width: 100%; height: 60px;
+            background-color: #F5F5DC; border: 3px solid #6A1B9A; border-radius: 15px;
+            color: #6A1B9A; font-family: inherit; font-size: 1.3rem; font-weight: bold;
+            text-decoration: none; cursor: pointer; box-shadow: 3px 3px 0px rgba(106, 27, 154, 0.3);
+            transition: all 0.3s ease; gap: 10px;
+        }
+        .sketch-btn:hover { background-color: #6A1B9A; color: #F5F5DC; transform: translateY(-4px); box-shadow: 6px 6px 0px rgba(106, 27, 154, 0.5); }
+        .sketch-btn:active { transform: translateY(2px); box-shadow: 1px 1px 0px rgba(106, 27, 154, 0.5); }
+
+        /* ==================== المنيو ==================== */
+        #menu-section {
+            display: none; width: 90%; max-width: 500px; margin-top: 20px; margin-bottom: 100px;
+            background-color: #F5F5DC; border: 4px solid #6A1B9A; border-radius: 20px; padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 20;
+        }
+        .menu-header { text-align: center; color: #6A1B9A; margin-bottom: 20px; border-bottom: 2px dashed #6A1B9A; padding-bottom: 10px; }
+        .category-title { color: #6A1B9A; font-size: 1.2rem; border-bottom: 1px solid #6A1B9A; margin-top: 20px; margin-bottom: 10px; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px dashed rgba(106, 27, 154, 0.3); margin-bottom: 5px; }
+        .item-info { display: flex; flex-direction: column; gap: 5px; color: #6A1B9A; font-weight: bold; font-size: 1.1rem; }
+        .item-price { font-size: 0.9rem; color: #555; }
+        .add-btn { background-color: transparent; color: #6A1B9A; border: 2px solid #6A1B9A; padding: 5px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .add-btn:hover { background-color: #6A1B9A; color: white; }
+        .back-btn { display: block; width: fit-content; margin: 20px auto 0; padding: 10px 20px; background-color: transparent; border: 2px solid #6A1B9A; color: #6A1B9A; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* ==================== نافذة الخيارات ==================== */
+        #optionsModal { display: none; position: fixed; z-index: 150; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .options-content { background-color: #F5F5DC; padding: 25px; border: 4px solid #6A1B9A; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; position: relative; animation: popIn 0.3s ease; }
+        @keyframes popIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        .opt-group { margin-bottom: 15px; text-align: right; }
+        .opt-label { font-weight: bold; color: #6A1B9A; display: block; margin-bottom: 5px; }
+        .toggle-container { display: flex; border: 2px solid #6A1B9A; border-radius: 10px; overflow: hidden; }
+        .toggle-btn { flex: 1; padding: 10px; background: transparent; border: none; cursor: pointer; font-weight: bold; color: #6A1B9A; border-left: 1px solid #6A1B9A; transition: 0.2s; }
+        .toggle-btn:last-child { border-left: none; }
+        .toggle-btn.active { background-color: #6A1B9A; color: #F5F5DC; }
+        .confirm-add-btn { width: 100%; padding: 12px; background-color: #6A1B9A; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 10px; }
+
+        /* ==================== نافذة المكافآت ==================== */
+        #rewardsModal { display: none; position: fixed; z-index: 160; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+        .rewards-content { background-color: #F5F5DC; padding: 20px; border: 4px solid #6A1B9A; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; position: relative; }
+        .points-circle { width: 120px; height: 120px; border-radius: 50%; border: 5px solid #6A1B9A; margin: 0 auto 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #6A1B9A; font-weight: bold; background: white; }
+        .points-number { font-size: 2.5rem; }
+        
+        .rewards-table { margin-top: 20px; border: 2px solid #6A1B9A; border-radius: 10px; overflow: hidden; background: white; }
+        .reward-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px dashed #ccc; font-weight: bold; font-size: 0.9rem; }
+        .reward-row:last-child { border-bottom: none; }
+        .reward-points { color: #6A1B9A; width: 30%; text-align: right; }
+        .reward-item { color: #333; width: 40%; text-align: center; }
+        .reward-status { width: 30%; text-align: left; }
+        
+        .claim-btn { background-color: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .claim-btn:hover { background-color: #45a049; }
+        .locked { color: #ccc; font-size: 1.2rem; }
+
+        /* ==================== السلة واللعبة ==================== */
+        #floating-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #6A1B9A; color: #F5F5DC; padding: 15px 30px; border-radius: 30px; display: none; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 50; font-size: 1.2rem; font-weight: bold; width: 80%; justify-content: center; }
+        #order-success-section { display: none; width: 90%; max-width: 400px; margin-top: 100px; text-align: center; background-color: rgba(245, 245, 220, 0.95); padding: 30px; border: 4px solid #6A1B9A; border-radius: 20px; z-index: 30; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); }
+        .modal-content { background-color: #F5F5DC; margin: 15% auto; padding: 30px; border: 4px solid #6A1B9A; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; color: #6A1B9A; position: relative; }
+        .close-btn { color: #aaa; float: right; font-size: 32px; font-weight: bold; cursor: pointer; position: absolute; top: 10px; right: 20px; }
+        .cup-wrapper { position: relative; width: 160px; margin: 20px auto; }
+        .cup-container { position: relative; width: 140px; height: 160px; border: 6px solid #6A1B9A; border-top: none; border-radius: 0 0 50px 50px; background-color: rgba(255,255,255,0.6); overflow: hidden; z-index: 2; }
+        .cup-handle { position: absolute; top: 30px; right: -15px; width: 35px; height: 60px; border: 6px solid #6A1B9A; border-radius: 0 20px 20px 0; z-index: 1; }
+        .target-line { position: absolute; bottom: 80%; width: 100%; height: 4px; border-top: 4px dashed #6A1B9A; z-index: 2; }
+        .coffee-liquid { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background-color: #6f4e37; transition: height 0.02s linear; }
+        #gameActionBtn { background-color: #6A1B9A; color: #F5F5DC; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 12px; width: 100%; margin-top: 15px; }
+        #result-msg { font-size: 1.2rem; font-weight: bold; min-height: 1.5em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="buttons-container" id="main-buttons">
+        <button id="orderBtn" class="sketch-btn" onclick="showMenu()">اطلب الآن</button>
+        
+        <button onclick="showRewards()" class="sketch-btn">
+            <i class="fa-solid fa-gift"></i>
+            <span>مكافآتي</span>
+        </button>
+
+        <a href="https://www.google.com/maps/search/?api=1&query=PM9P%2B434+%D8%A7%D9%84%D8%B3%D9%84%D9%8A%D9%85%D8%A7%D9%86%D9%8A%D8%A9%D8%8C+%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6" target="_blank" class="sketch-btn">موقعنا</a>
+    </div>
+
+    <div id="rewardsModal">
+        <div class="rewards-content">
+            <span class="close-btn" onclick="closeRewards()">×</span>
+            <h2>رصيد مكافآتي</h2>
+            
+            <div class="points-circle">
+                <span class="points-number" id="user-points-display">0</span>
+                <span style="font-size: 1rem;">نقطة</span>
+            </div>
+            
+            <p style="color:#555; font-size:0.9rem; margin-bottom:10px;">
+                اطلب منتجات أو العب لتجمع نقاط أكثر!
+            </p>
+
+            <h3 style="margin-bottom:10px; color:#6A1B9A;">استبدال النقاط</h3>
+            <div class="rewards-table">
+                <div class="reward-row">
+                    <span class="reward-points">80</span>
+                    <span class="reward-item">قهوة اليوم</span>
+                    <span class="reward-status" id="reward-80">🔒</span>
+                </div>
+                <div class="reward-row">
+                    <span class="reward-points">100</span>
+                    <span class="reward-item">قهوة V60</span>
+                    <span class="reward-status" id="reward-100">🔒</span>
+                </div>
+                <div class="reward-row">
+                    <span class="reward-points">120</span>
+                    <span class="reward-item">حلى</span>
+                    <span class="reward-status" id="reward-120">🔒</span>
+                </div>
+            </div>
+            
+            <button class="confirm-add-btn" style="margin-top:20px;" onclick="closeRewards()">إغلاق</button>
+        </div>
+    </div>
+
+    <div id="menu-section">
+        <h2 class="menu-header">قائمة القهوة</h2>
+        <p style="text-align:center; color:#555; font-size:0.8rem; margin-bottom:15px;">اجمع 10 نقاط لكل منتج!</p>
+        
+        <h3 class="category-title">القهوة المختصة</h3>
+        <div class="menu-item"><div class="item-info"><span>قهوة اليوم</span><span class="item-price">تبدأ من 5.75</span></div><button class="add-btn" onclick="openOptions('قهوة اليوم', 5.75, 7.75, true)">إضافة +</button></div>
+        <div class="menu-item"><div class="item-info"><span>قهوة V60</span><span class="item-price">تبدأ من 10.57</span></div><button class="add-btn" onclick="openOptions('قهوة V60', 10.57, 13.57, true)">إضافة +</button></div>
+
+        <h3 class="category-title">مشروبات وحلويات</h3>
+        <div class="menu-item"><div class="item-info"><span>كركديه</span><span class="item-price">7.57</span></div><button class="add-btn" onclick="directAdd('كركديه')">إضافة +</button></div>
+        <div class="menu-item"><div class="item-info"><span>ميني كوكيز</span><span class="item-price">12.00</span></div><button class="add-btn" onclick="directAdd('ميني كوكيز')">إضافة +</button></div>
+        <div class="menu-item"><div class="item-info"><span>بودنغ</span><span class="item-price">12.00</span></div><button class="add-btn" onclick="directAdd('بودنغ')">إضافة +</button></div>
+
+        <button class="back-btn" onclick="hideMenu()">عودة للرئيسية</button>
+    </div>
+
+    <div id="optionsModal">
+        <div class="options-content">
+            <h3 id="opt-item-name" style="color:#6A1B9A; margin-bottom:15px;"></h3>
+            <div class="opt-group"><span class="opt-label">الحجم</span><div class="toggle-container"><button class="toggle-btn active" onclick="selectSize('mid')" id="btn-mid">وسط <br><span id="price-mid-display"></span></button><button class="toggle-btn" onclick="selectSize('large')" id="btn-large">كبير <br><span id="price-large-display"></span></button></div></div>
+            <div class="opt-group"><span class="opt-label">نوع المشروب</span><div class="toggle-container"><button class="toggle-btn active" onclick="toggleSelect(this, 'temp')">حار 🔥</button><button class="toggle-btn" onclick="toggleSelect(this, 'temp')">بارد 🧊</button></div></div>
+            <div class="opt-group"><span class="opt-label">نوع المحصول</span><div class="toggle-container"><button class="toggle-btn active" onclick="toggleSelect(this, 'bean')">إثيوبي 🇪🇹</button><button class="toggle-btn" onclick="toggleSelect(this, 'bean')">كولمبي 🇨🇴</button></div></div>
+            <button class="confirm-add-btn" onclick="confirmAddItem()">اعتماد وإضافة للسلة</button>
+            <button style="background:none; border:none; color:#555; margin-top:10px; cursor:pointer;" onclick="closeOptions()">إلغاء</button>
+        </div>
+    </div>
+
+    <div id="floating-cart" onclick="confirmOrder()">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <span id="cart-count">0 منتجات</span> | إتمام الطلب
+    </div>
+
+    <div id="order-success-section">
+        <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #4CAF50; margin-bottom: 20px;"></i>
+        <h2>تم استلام طلبك!</h2>
+        <p style="font-size: 1.2rem;">ودامك تنتظر الباريستا...<br><strong>العب معنا واكسب نقاط زيادة!</strong></p>
+        <p style="color: #6A1B9A; font-weight: bold;" id="attempts-msg"></p>
+        <button class="sketch-btn" onclick="startGameSession()" style="background-color: #6A1B9A; color: white;">ابدأ اللعب 🎮</button>
+    </div>
+
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeWithMsg()">×</span>
+            <h2>تحدي الصبة!</h2>
+            <div id="game-attempts-display" style="color:#555; margin-bottom:10px;"></div>
+            <div id="gameArea">
+                <div class="cup-wrapper"><div class="cup-handle"></div><div class="cup-container"><div class="target-line"></div><div class="coffee-liquid" id="coffee"></div></div></div>
+                <div id="result-msg"></div>
+                <button id="gameActionBtn">صب القهوة ☕</button>
+            </div>
+            <button id="nextGameBtn" class="menu-btn" style="display:none; width:100%;" onclick="nextAttempt()">المحاولة التالية</button>
+            
+            <div id="finalScoreSection" style="display:none; margin-top: 20px;">
+                <h3 id="total-points"></h3>
+                <p style="color:#555; font-size:0.9rem;">(تمت إضافتها لرصيد مكافآتي)</p>
+                <button class="sketch-btn" onclick="finishSession()" style="background-color: #6A1B9A; color: white; margin-top: 15px;">العودة للرئيسية</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="pourSound" src="https://www.soundjay.com/drink/sounds/pouring-water-01.mp3" preload="auto"></audio>
+
+    <script>
+        // المتغيرات
+        let cart = [];
+        let currentItem = {};
+        let totalAttempts = 0, currentAttempts = 0, gamePoints = 0;
+        let userPoints = 0; // رصيد نقاط المستخدم
+
+        // --- وظائف المنيو ---
+        function showMenu() { document.getElementById("main-buttons").style.display = "none"; document.getElementById("menu-section").style.display = "block"; if(cart.length > 0) document.getElementById("floating-cart").style.display = "flex"; }
+        function hideMenu() { document.getElementById("menu-section").style.display = "none"; document.getElementById("floating-cart").style.display = "none"; document.getElementById("main-buttons").style.display = "flex"; }
+
+        // --- وظائف مكافآتي المطورة (الطلب بالمكافآت) ---
+        function showRewards() {
+            document.getElementById("user-points-display").innerText = userPoints;
+            updateRewardStatus();
+            document.getElementById("rewardsModal").style.display = "flex";
+        }
+        function closeRewards() { document.getElementById("rewardsModal").style.display = "none"; }
+        
+        function updateRewardStatus() {
+            checkAndRenderReward('reward-80', 80, 'قهوة اليوم');
+            checkAndRenderReward('reward-100', 100, 'قهوة V60');
+            checkAndRenderReward('reward-120', 120, 'ميني كوكيز');
+        }
+
+        function checkAndRenderReward(elementId, cost, itemName) {
+            let el = document.getElementById(elementId);
+            if (userPoints >= cost) {
+                // إذا النقاط تكفي، نظهر زر الطلب
+                el.innerHTML = `<button class='claim-btn' onclick='claimReward("${itemName}", ${cost})'>اطلب مجاناً</button>`;
+                el.className = "reward-status";
+            } else {
+                // إذا لا تكفي، نظهر القفل
+                el.innerText = "🔒";
+                el.className = "reward-status locked";
+            }
+        }
+
+        function claimReward(itemName, cost) {
+            if(confirm("هل تريد استبدال " + cost + " نقطة والحصول على " + itemName + " مجاناً؟")) {
+                userPoints -= cost; // خصم النقاط
+                cart.push({name: "مكافأة: " + itemName, priceMid: 0}); // إضافة للسلة
+                
+                alert("تم إضافة " + itemName + " لسلتك مجاناً! 🎉");
+                updateCartUI();
+                showRewards(); // تحديث الواجهة (النقاط قلت)
+            }
+        }
+
+        // --- خيارات المنتج ---
+        function openOptions(name, priceMid, priceLarge, hasOptions) {
+            currentItem = { name: name, priceMid: priceMid, priceLarge: priceLarge, size: 'mid', temp: 'حار', bean: 'إثيوبي' };
+            document.getElementById("opt-item-name").innerText = name;
+            document.getElementById("price-mid-display").innerText = priceMid;
+            document.getElementById("price-large-display").innerText = priceLarge;
+            selectSize('mid'); resetToggles();
+            document.getElementById("optionsModal").style.display = "flex";
+        }
+        function closeOptions() { document.getElementById("optionsModal").style.display = "none"; }
+        function selectSize(size) { currentItem.size = size; document.getElementById("btn-mid").classList.toggle('active', size === 'mid'); document.getElementById("btn-large").classList.toggle('active', size === 'large'); }
+        function toggleSelect(btn, type) { let siblings = btn.parentElement.children; for(let sib of siblings) sib.classList.remove('active'); btn.classList.add('active'); let val = btn.innerText.split(' ')[0]; if(type === 'temp') currentItem.temp = val; if(type === 'bean') currentItem.bean = val; }
+        function resetToggles() { let containers = document.querySelectorAll('.toggle-container'); containers.forEach(con => { let btns = con.children; for(let b of btns) b.classList.remove('active'); btns[0].classList.add('active'); }); currentItem.temp = 'حار'; currentItem.bean = 'إثيوبي'; }
+        
+        function confirmAddItem() { cart.push(currentItem); updateCartUI(); closeOptions(); }
+        function directAdd(name) { cart.push({name: name}); updateCartUI(); }
+        function updateCartUI() { document.getElementById("cart-count").innerText = cart.length + " منتجات"; document.getElementById("floating-cart").style.display = "flex"; }
+
+        // --- الطلب واللعبة ---
+        function confirmOrder() {
+            document.getElementById("menu-section").style.display = "none";
+            document.getElementById("floating-cart").style.display = "none";
+            document.getElementById("rewardsModal").style.display = "none"; // اغلاق المكافآت اذا كانت مفتوحة
+            
+            // نحسب المحاولات فقط للمنتجات المدفوعة (اختياري، هنا نحسب للكل)
+            totalAttempts = cart.length; 
+            currentAttempts = totalAttempts; 
+            gamePoints = 0;
+            
+            document.getElementById("attempts-msg").innerText = "لديك " + totalAttempts + " محاولات (لكل منتج محاولة)";
+            document.getElementById("order-success-section").style.display = "block";
+            
+            // إضافة نقاط المنتجات (10 نقاط لكل منتج)
+            let orderPoints = cart.length * 10;
+            userPoints += orderPoints;
+        }
+
+        function startGameSession() { document.getElementById("order-success-section").style.display = "none"; document.getElementById("gameModal").style.display = "block"; startNewRound(); }
+
+        let isPouring = false, height = 0, interval, roundEnded = false; const pourSound = document.getElementById("pourSound");
+
+        function startNewRound() {
+            document.getElementById("gameArea").style.display = "block"; document.getElementById("nextGameBtn").style.display = "none"; document.getElementById("finalScoreSection").style.display = "none";
+            document.getElementById("result-msg").innerText = ""; document.getElementById("coffee").style.height = "0%"; height = 0; roundEnded = false;
+            document.getElementById("game-attempts-display").innerText = "محاولة " + ((totalAttempts - currentAttempts) + 1) + " من " + totalAttempts;
+            let btn = document.getElementById("gameActionBtn"); btn.innerText = "صب القهوة ☕"; btn.style.background = "#6A1B9A"; btn.disabled = false; btn.style.display = "block";
+        }
+
+        document.getElementById("gameActionBtn").addEventListener('touchstart', (e) => { e.preventDefault(); togglePour(); });
+        document.getElementById("gameActionBtn").onclick = togglePour;
+
+        function togglePour() {
+            if (roundEnded) return;
+            if (!isPouring) {
+                isPouring = true; let btn = document.getElementById("gameActionBtn"); btn.innerText = "وقف! 🛑"; btn.style.background = "#D32F2F";
+                if(pourSound) pourSound.play();
+                interval = setInterval(() => { height += 1.8; document.getElementById("coffee").style.height = height + "%"; if (height >= 100) stopPouring(); }, 15);
+            } else { stopPouring(); }
+        }
+
+        function stopPouring() {
+            clearInterval(interval); isPouring = false; if(pourSound) { pourSound.pause(); pourSound.currentTime = 0; }
+            roundEnded = true; let msg = document.getElementById("result-msg");
+            
+            if (height >= 75 && height <= 85) {
+                msg.innerHTML = "<span style='color:green'>كفو! +10 نقاط 🌟</span>";
+                gamePoints += 10;
+                userPoints += 10;
+            } else { msg.innerHTML = "<span style='color:red'>راحت عليك! 😅</span>"; }
+            
+            currentAttempts--; document.getElementById("gameActionBtn").style.display = "none";
+            if (currentAttempts > 0) { document.getElementById("nextGameBtn").style.display = "block"; }
+            else { setTimeout(() => {
+                document.getElementById("gameArea").style.display = "none";
+                document.getElementById("finalScoreSection").style.display = "block";
+                document.getElementById("total-points").innerHTML = "مجموع نقاط اللعب:<br>" + gamePoints;
+            }, 1000); }
+        }
+
+        function nextAttempt() { startNewRound(); }
+        function finishSession() { cart = []; closeModal(); hideMenu(); showRewards(); }
+        function closeModal() { document.getElementById("gameModal").style.display = "none"; clearInterval(interval); }
+        
+        function closeWithMsg() {
+            alert("ولا يهمك! خلك مرتاح، الباريستا شغال على طلبك الحين ☕💜");
+            closeModal();
+        }
+    </script>
+</body>
+</html>
