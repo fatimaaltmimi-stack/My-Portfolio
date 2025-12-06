@@ -1,1 +1,173 @@
-test
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض أعمال فاطمة التميمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background-color: #fcfcfc; color: #333; text-align: center; overflow-x: hidden; }
+        
+        header { background-color: #2c3e50; color: white; padding: 50px 20px; border-bottom: 5px solid #bdc3c7; }
+        h1 { margin: 0; font-size: 2.2em; font-weight: 700; }
+        .header-btn { display: inline-block; margin-top: 20px; padding: 8px 25px; background: transparent; color: white; border: 1px solid white; border-radius: 5px; text-decoration: none; font-size: 1em; transition: 0.3s; }
+        .header-btn:hover { background: white; color: #2c3e50; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        
+        .projects-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end;
+            gap: 80px; padding-top: 100px; padding-bottom: 50px;
+        }
+
+        /* --- 1. الكيس المزدحم --- */
+        .bag-wrapper { position: relative; width: 260px; height: 240px; margin-top: 50px; transition: transform 0.3s; }
+        .bag-wrapper:hover { transform: translateY(-5px); }
+        .bag-back { position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background-color: #ffcdd2; border-radius: 5px 5px 20px 20px; z-index: 1; }
+        .bag-handle { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 100px; height: 70px; border: 8px solid #ffb7b2; border-bottom: none; border-radius: 50px 50px 0 0; z-index: 0; }
+        .products-cluster { position: absolute; bottom: 150px; left: 10px; right: 10px; height: 100px; z-index: 2; }
+        .item { position: absolute; font-size: 2.2em; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); transition: transform 0.3s; }
+        
+        .i1 { left: -5px; top: 10px; transform: rotate(-25deg); font-size: 2.8em; z-index: 1; }
+        .i2 { right: 0px; top: 15px; transform: rotate(15deg); font-size: 2.8em; z-index: 2; }
+        .i3 { left: 50%; top: -20px; transform: translateX(-50%) rotate(90deg); font-size: 3.2em; z-index: 0; opacity: 0.9; }
+        .i4 { left: 40px; top: 40px; transform: rotate(-10deg); font-size: 2.5em; z-index: 4; }
+        .i5 { right: 40px; top: 35px; transform: rotate(20deg); font-size: 2.5em; z-index: 3; }
+        .i6 { left: 80px; top: 0px; transform: rotate(-5deg); font-size: 1.5em; z-index: 5; }
+        .i7 { right: 70px; top: -5px; transform: rotate(10deg); font-size: 1.8em; z-index: 5; }
+
+        .bag-wrapper:hover .item { transform: translateY(-10px) scale(1.1); } 
+        .bag-front { position: absolute; bottom: 0; left: 0; right: 0; height: 180px; background-color: #ffe4e1; border: 2px solid #ffcdd2; border-top: none; border-radius: 0 0 20px 20px; z-index: 10; padding-top: 50px; clip-path: polygon(0 25px, 100% 25px, 100% 100%, 0 100%); margin-top: -20px; }
+        .bag-rim { position: absolute; top: 0; left: 0; right: 0; height: 25px; background-color: #ffcdd2; border-radius: 0 0 5px 5px; z-index: 11; }
+        .bag-front h3 { color: #e57373; margin: 0; font-size: 1.4em; }
+        .btn-bag { display: inline-block; padding: 6px 18px; background: #ffb7b2; color: white; border-radius: 20px; text-decoration: none; font-weight: bold; margin-top: 10px; font-size: 0.85em; }
+        .btn-bag:hover { background: #e57373; }
+
+        /* --- 2. الساعة المتفاعلة --- */
+        .watch-container { position: relative; width: 220px; background: #fff59d; border-radius: 38px; padding: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin: 30px 0; z-index: 2; transition: transform 0.3s; }
+        .watch-container:hover .watch-screen { transform: translateY(-25px) scale(1.03) rotateX(10deg); box-shadow: 0 15px 25px rgba(0,0,0,0.3); background: #1c252b; }
+        .watch-container:hover .pulse-icon { transform: scale(1.3); text-shadow: 0 0 10px #e74c3c; }
+        .strap { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 130px; height: 50px; background: #fdd835; z-index: -1; }
+        .strap-top { top: -35px; border-radius: 15px 15px 0 0; }
+        .strap-bottom { bottom: -35px; border-radius: 0 0 15px 15px; }
+        .watch-screen { background: #263238; color: white; border-radius: 30px; padding: 20px 10px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; z-index: 10; }
+        .pulse-icon { transition: transform 0.3s; }
+        .watch-screen h3 { color: #fff59d; font-size: 1.1em; margin: 10px 0; }
+        .btn-watch { font-size: 0.75em; padding: 5px 12px; background: #fff59d; color: #333; border-radius: 15px; text-decoration: none; font-weight: bold; margin-top: 10px; }
+
+        /* --- 3. الكوب المتفاعل --- */
+        .cup-wrapper { position: relative; width: 260px; height: 340px; margin-top: 0; }
+        .cup-wrapper:hover .cup-lid { transform: translateX(-50%) translateY(-50px) rotate(-10deg); }
+        .cup-wrapper:hover .steam { animation-duration: 1.2s; opacity: 0.9; }
+
+        .cup-lid { width: 270px; height: 50px; background-color: #3e2723; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-radius: 15px 15px 5px 5px; box-shadow: 0 4px 5px rgba(0,0,0,0.3); z-index: 10; border-bottom: 6px solid #281a16; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .cup-lid::before { content: ''; position: absolute; top: -5px; right: 40px; width: 30px; height: 15px; background: #3e2723; border-radius: 5px 5px 0 0; }
+        
+        .cup-body { width: 260px; height: 320px; background: linear-gradient(to right, #ffffff, #f2f2f2); position: absolute; top: 35px; left: 50%; transform: translateX(-50%); clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%); z-index: 5; padding-top: 60px; }
+        .cup-sleeve { position: absolute; top: 90px; left: 50%; transform: translateX(-50%); width: 265px; height: 110px; background-color: #7b1fa2; clip-path: polygon(2% 0, 98% 0, 92% 100%, 8% 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 6; }
+        .cup-content { position: absolute; bottom: 25px; left: 0; right: 0; text-align: center; width: 100%; }
+        .btn-cup { display: block; width: 75%; margin: 5px auto; padding: 6px 0; background: transparent; color: #7b1fa2; border: 1.5px solid #7b1fa2; border-radius: 20px; text-decoration: none; font-size: 0.85em; font-weight: bold; transition: 0.2s; }
+        .btn-cup:hover { background: #7b1fa2; color: white; }
+        
+        .steam-container { position: absolute; top: -80px; right: 50px; z-index: 1; }
+        .steam { position: absolute; background-color: #b0bec5; border-radius: 50%; opacity: 0; filter: blur(6px); animation: rise 2s infinite ease-out; }
+        .steam:nth-child(1) { width: 18px; height: 50px; left: 0; animation-delay: 0s; }
+        .steam:nth-child(2) { width: 25px; height: 60px; left: 25px; animation-delay: 0.5s; }
+        .steam:nth-child(3) { width: 15px; height: 40px; left: 10px; animation-delay: 1.2s; }
+
+        @keyframes rise { 0% { opacity: 0; transform: translateY(0) scale(1); } 30% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(-70px) scale(1.5); } }
+
+        footer { margin-top: 100px; padding: 30px; background: #2c3e50; color: #bdc3c7; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>فاطمة التميمي</h1>
+        <p>Portfolio | طالبة تجارة إلكترونية ومطورة ويب</p>
+        
+        <a href="cv.pdf" target="_blank" class="header-btn">
+             عرض السيرة الذاتية <i class="fas fa-eye"></i>
+        </a>
+    </header>
+
+    <div class="container">
+        <h2 style="color:#2c3e50; margin-bottom: 20px;">أبرز المشاريع</h2>
+        <p style="color:#777; margin-bottom: 80px;">مشاريع تفاعلية تعكس مهاراتي</p>
+        
+        <div class="projects-grid">
+
+            <div class="bag-wrapper">
+                <div class="bag-handle"></div>
+                <div class="bag-back"></div>
+                
+                <div class="products-cluster">
+                    <div class="item i1">📱</div>
+                    <div class="item i2">🧋</div>
+                    <div class="item i3">📱</div>
+                    <div class="item i4">🥤</div>
+                    <div class="item i5">📲</div>
+                    <div class="item i6">✨</div>
+                    <div class="item i7">💖</div>
+                </div>
+
+                <div class="bag-front">
+                    <div class="bag-rim"></div>
+                    <h3>متجر MSC</h3>
+                    <p style="font-size: 0.85em; color:#d88181; margin-top:5px; padding:0 10px;">
+                        متجر إلكتروني شامل
+                        <br>
+                        (كفرات، آيباد، قهوة باردة)
+                    </p>
+                    <a href="store-report.pdf" target="_blank" class="btn-bag">تقرير المتجر <i class="fas fa-shopping-bag"></i></a>
+                </div>
+            </div>
+
+            <div class="watch-container">
+                <div class="strap strap-top"></div>
+                <div class="watch-screen">
+                    <i class="fas fa-heartbeat pulse-icon" style="color: #e74c3c; font-size: 1.5em; margin-bottom: 5px;"></i>
+                    <h3>ساعة الأمان</h3>
+                    <p style="font-size: 0.8em; color:#bdc3c7;">
+                        ابتكار تقني IoT للأطفال
+                        <br>
+                        تتبع وتنبؤ بالنوبات
+                    </p>
+                    <a href="watch-project.pdf" target="_blank" class="btn-watch">عرض الابتكار <i class="fas fa-file-pdf"></i></a>
+                </div>
+                <div class="strap strap-bottom"></div>
+            </div>
+
+            <div class="cup-wrapper">
+                <div class="steam-container">
+                    <div class="steam"></div>
+                    <div class="steam"></div>
+                    <div class="steam"></div>
+                </div>
+
+                <div class="cup-lid"></div>
+                
+                <div class="cup-body">
+                    <div class="cup-sleeve">
+                        <i class="fas fa-mug-hot" style="font-size: 1.8em; margin-bottom:5px;"></i>
+                        <h3 style="margin:0; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Purple Coffee</h3>
+                    </div>
+
+                    <div class="cup-content">
+                        <a href="feasibility-study.pdf" target="_blank" class="btn-cup">ألق نظرة لدراسة الجدوى</a>
+                        <a href="https://purple-coffee.vercel.app/purple.html" target="_blank" class="btn-cup">زيارة المشروع</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>تم التصميم والبرمجة بواسطة فاطمة التميمي &copy; 2025</p>
+        <p>fatimaalatmimi@gmail.com</p>
+    </footer>
+
+</body>
+</html>
